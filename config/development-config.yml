@@ -1,0 +1,15 @@
+app:
+  name: currency
+  port: 8080
+mongodb:
+  urls:
+    - ds219181.mlab.com:19181
+  port: 19181
+  database: currency
+  replica_set:
+  username: admin
+  password: 87ZeCRydozhg
+webservices:
+  fixer:
+    url: http://data.fixer.io/api
+    api_key: cda0d18a191f78eb3ec4302b2bedbe39
