@@ -11,7 +11,13 @@ func AddRequestId(ctx iris.Context) {
 	requestId := ctx.GetHeader(requestIdKey)
 
 	if requestId == "" {
-		requestId = uuid.NewV4().String()
+		u, err := uuid.NewV4()
+		if err != nil {
+			ctx.StatusCode(iris.StatusInternalServerError)
+			return
+		}
+
+		requestId = u.String()
 
 		request := ctx.Request()
 		request.Header.Add(requestIdKey, requestId)
