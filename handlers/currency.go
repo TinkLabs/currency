@@ -94,6 +94,20 @@ func CreateCurrencyRate(ctx iris.Context) {
 	ctx.JSON(enCurrencyRate)
 }
 
+func CreateCurrenciesRate(ctx iris.Context) {
+	log := logrus.WithFields(logrus.Fields{"module": "handler", "method": "CreateCurrenciesRate", "http_request": ctx.Request()})
+
+	id := ctx.Params().Get("id")
+	xRequestId := ctx.Values().GetString("_x_request_id")
+
+	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "id": id})
+
+	go currencysrv.CreateCurrenciesRate()
+
+	log.Debug("Successfully accepted create currencies rate request")
+	ctx.StatusCode(202)
+}
+
 func ListCurrencyRates(ctx iris.Context) {
 	log := logrus.WithFields(logrus.Fields{"module": "handler", "method": "ListCurrencyRates", "http_request": ctx.Request()})
 
