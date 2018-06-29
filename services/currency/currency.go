@@ -6,6 +6,9 @@ import (
 	encurrency "currency/entities/currency"
 
 	"github.com/sirupsen/logrus"
+
+	// TODO: remove explicit init
+	_ "currency/core/webservices/fixer"
 )
 
 var ErrNotFound = errors.New("not found")
