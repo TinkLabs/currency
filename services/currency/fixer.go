@@ -35,8 +35,9 @@ func CreateCurrencies() error {
 func CreateCurrencyRate(code string) (*encurrency.Rate, error) {
 	log := logrus.WithFields(logrus.Fields{"module": "services/currency/fixer", "method": "CreateCurrencyRate", "currency_code": code})
 
-	base := ""
-	toCurrencies := []string{}
+	base := code
+	toCurrencies := []string{} // default all
+
 	baseRate, err := fixersrv.ListRates(base, toCurrencies)
 	if err != nil {
 		log.WithField("err", err).Error("Failed to get currency rate")
