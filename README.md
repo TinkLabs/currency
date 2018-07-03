@@ -8,10 +8,9 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* [go 1.9.3](https://golang.org/dl/)
+* [go (latest version)](https://golang.org/dl/)
 * [dep](https://github.com/golang/dep)
 * [docker](https://docs.docker.com/engine/installation/)
-* [docker-compose](https://docs.docker.com/compose/install/)
 
 ### Installing
 
@@ -38,22 +37,28 @@ cd $GOPATH/src
 #### 4. clone repo
 
 ```
-git clone https://github.com/TinkLabs/Currency.git
+git clone https://github.com/TinkLabs/currency.git
 ```
 
 #### 5. cd to project root dir
 
 ```
-cd Currency
+cd currency
 ```
 
-#### 6. Run application
+#### 6. Set environment variable
 
 ```
-docker-compose up
+export APP_ENV=localhost
 ```
 
-#### 7. Open another terminal and ping server
+#### 7. Run application
+
+```
+go run main.go
+```
+
+#### 8. Open another terminal and ping server
 
 ```
 curl localhost:8080
