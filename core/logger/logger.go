@@ -23,22 +23,11 @@ func init() {
 		// lower log level for testing and debugging
 		logrus.SetLevel(logrus.DebugLevel)
 	case "development":
-		fallthrough
+		setupLogger()
 	case "staging":
-		fallthrough
+		setupLogger()
 	case "production":
-		// log to file with json format and higher logging level
-		file, err := os.OpenFile("./logs/currency.log", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0660)
-		if err != nil {
-			fmt.Printf("Failed to open log file, err=%+v\n", err)
-			os.Exit(1)
-		}
-
-		// log as JSON format
-		logrus.SetFormatter(&logrus.JSONFormatter{})
-
-		// log to file
-		logrus.SetOutput(file)
+		setupLogger()
 
 		// only log the info severity or above.
 		logrus.SetLevel(logrus.InfoLevel)
@@ -46,4 +35,22 @@ func init() {
 		fmt.Printf("Failed to start, since APP_ENV = %s is not registered\n", appEnv)
 		os.Exit(1)
 	}
+}
+
+func setupLogger() {
+	// log to file with json format and higher logging level
+	file, err := os.OpenFile("./logs/currency.log", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0660)
+	if err != nil {
+		fmt.Printf("Failed to open log file, err=%+v\n", err)
+		os.Exit(1)
+	}
+
+	// log as JSON format
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+
+	// log to file
+	logrus.SetOutput(file)
+
+	// only log the info severity or above.
+	logrus.SetLevel(logrus.InfoLevel)
 }
