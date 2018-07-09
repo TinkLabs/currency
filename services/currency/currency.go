@@ -191,13 +191,13 @@ func Count(query map[string]interface{}) (int, error) {
 func Convert(from, to string, amount float64) (interface{}, error) {
 	log := logrus.WithFields(logrus.Fields{"module": "services/currency", "method": "Convert", "from": from, "to": to, "amount": amount})
 
-	enBaseRate, err := FindLatestRatesByBase("EUR")
+	enBaseRate, err := FindLatestRatesByBase(from)
 	if err != nil {
 		log.WithField("err", err).Error("Failed to find base currency")
 		return 0, err
 	}
 
-	toAmount, err := enBaseRate.Convert2(from, to, amount)
+	toAmount, err := enBaseRate.Convert(from, to, amount)
 	if err != nil {
 		log.WithField("err", err).Error("Failed to convert currencies")
 		return 0, err
