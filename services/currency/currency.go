@@ -197,7 +197,7 @@ func Convert(from, to string, amount float64) (interface{}, error) {
 		return 0, err
 	}
 
-	toAmount, err := enBaseRate.Convert(from, to, amount)
+	toAmount, err := enBaseRate.Convert(to, amount)
 	if err != nil {
 		log.WithField("err", err).Error("Failed to convert currencies")
 		return 0, err

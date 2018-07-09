@@ -26,40 +26,17 @@ type Rate struct {
 }
 
 // Convert calculates how much to currency is needed given amount of from currency
-func (r *Rate) Convert(from, to string, amount float64) (float64, error) {
-	if from != r.Base {
-		return 0, ErrInvalidParams
-	}
-
-	toRate, present := r.Rates[to]
-	if !present {
-		return 0, ErrInvalidParams
-	}
-
-	return toRate * amount, nil
-}
-
-// Convert2 uses EUR as rate before we pay for API provider
-func (r *Rate) Convert2(from, to string, amount float64) (float64, error) {
-	if r.Base != "EUR" {
-		return 0, ErrInvalidParams
-	}
-
-	fromRate, present := r.Rates[from]
-	if !present {
-		return 0, ErrInvalidParams
-	}
-
+func (r *Rate) Convert(to string, amount float64) (float64, error) {
 	toRate, present := r.Rates[to]
 	if !present {
 		return 0, ErrInvalidParams
 	}
 
 	toRate2 := decimal.NewFromFloat(toRate)
-	fromRate2 := decimal.NewFromFloat(fromRate)
 	amount2 := decimal.NewFromFloat(amount)
 
-	result, _ := toRate2.Div(fromRate2).Mul(amount2).Round(3).Float64()
+	result, _ := toRate2.Mul(amount2).Round(3).Float64()
+
 	return result, nil
 }
 
