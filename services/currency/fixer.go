@@ -52,7 +52,7 @@ func CreateCurrencyRate(code string) (*encurrency.Rate, error) {
 		rates[string(code)] = float64(rate)
 	}
 
-	enRate, err := CreateRate(base, date, rates)
+	enRate, err := GetOrCreateCurrencyRate(base, date, rates)
 	if err != nil {
 		log.WithField("err", err).Error("Failed to create currency rate")
 		return nil, err
