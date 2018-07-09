@@ -33,20 +33,20 @@ func ListCurrencies(ctx iris.Context) {
 
 	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "limit": limit, "skip": skip, "order_by": orderBy})
 
-	enCurrencies, total, err := currencysrv.Search(nil, skip, limit, orderBy)
+	enCurrencies, err := currencysrv.FindAll()
 	if err != nil {
 		log.WithField("err", err).Error("Failed to list currencies")
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
 	}
 
-	count := len(enCurrencies)
+	total := len(enCurrencies)
 
-	log = log.WithFields(logrus.Fields{"count": count, "total": total})
+	log = log.WithFields(logrus.Fields{"count": total, "total": total})
 
 	result := pagination.New()
-	result.SetCount(count)
-	result.SetLimit(limit)
+	result.SetCount(total)
+	result.SetLimit(total)
 	result.SetSkip(skip)
 	result.SetTotal(total)
 	result.SetData(enCurrencies)
