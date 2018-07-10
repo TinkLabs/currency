@@ -83,7 +83,7 @@ func CreateCurrencyRate(ctx iris.Context) {
 
 	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "id": id})
 
-	enCurrencyRate, err := currencysrv.CreateCurrencyRate(enCurrency.Code)
+	enCurrencyRate, err := currencysrv.GetOrCreateCurrencyRate(enCurrency.Code)
 	if err != nil {
 		log.WithField("err", err).Error("Failed to create currency rate")
 		ctx.StatusCode(iris.StatusInternalServerError)
