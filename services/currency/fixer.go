@@ -1,11 +1,12 @@
 package currency
 
 import (
+	"time"
+
 	encurrency "currency/entities/currency"
 	fixersrv "currency/services/fixer"
 
 	"github.com/sirupsen/logrus"
-	"time"
 )
 
 func CreateCurrencies() error {
@@ -38,8 +39,7 @@ func GetOrCreateCurrencyRate(code string) (*encurrency.Rate, error) {
 
 	base := code
 
-	date := time.Now().String()
-	date = date[:10] // Get current date in the format YYYY-MM-DD
+	date := time.Now().UTC().Format("2006-01-02") // Get current date in the format YYYY-MM-DD
 
 	enRates, _, err := FindRatesByBaseDate(base, date, 0, 1, "")
 	if err != nil && err != ErrNotFound {
