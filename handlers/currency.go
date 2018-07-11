@@ -7,6 +7,7 @@ import (
 
 	"github.com/kataras/iris"
 	"github.com/sirupsen/logrus"
+	"time"
 )
 
 func GetCurrency(ctx iris.Context) {
@@ -105,6 +106,54 @@ func CreateCurrenciesRate(ctx iris.Context) {
 	go currencysrv.CreateCurrenciesRate()
 
 	log.Debug("Successfully accepted create currencies rate request")
+	ctx.StatusCode(202)
+}
+
+func CreateTimeSeriesCurrencyRate(ctx iris.Context) {
+	log := logrus.WithFields(logrus.Fields{"module": "handler", "method": "CreateTimeSeriesCurrenciesRate", "http_request": ctx.Request()})
+
+	xRequestId := ctx.Values().GetString("_x_request_id")
+	enCurrency := ctx.Values().Get("_encurrency").(*encurrency.Currency)
+	startDate := ctx.URLParam("start_date")
+	endDate := ctx.URLParam("end_date")
+
+	endTime, endErr := time.Parse("2006-01-02", endDate)
+	startTime, startErr := time.Parse("2006-01-02", startDate)
+	validDates := endTime.After(startTime)
+	if startErr != nil || endErr != nil || !validDates {
+		ctx.StatusCode(iris.StatusBadRequest)
+		return
+	}
+
+	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "code": enCurrency.Code, "start_date": startDate, "end_date": endDate})
+
+	go currencysrv.CreateTimeSeriesCurrencyRate(enCurrency.Code, startDate, endDate)
+
+	log.Debug("Successfully accepted create time series currencies rate request")
+	ctx.StatusCode(202)
+}
+
+func CreateTimeSeriesCurrenciesRate(ctx iris.Context) {
+	log := logrus.WithFields(logrus.Fields{"module": "handler", "method": "CreateTimeSeriesCurrenciesRate", "http_request": ctx.Request()})
+
+	xRequestId := ctx.Values().GetString("_x_request_id")
+
+	startDate := ctx.URLParam("start_date")
+	endDate := ctx.URLParam("end_date")
+
+	endTime, endErr := time.Parse("2006-01-02", endDate)
+	startTime, startErr := time.Parse("2006-01-02", startDate)
+	validDates := endTime.After(startTime)
+	if startErr != nil || endErr != nil || !validDates {
+		ctx.StatusCode(iris.StatusBadRequest)
+		return
+	}
+
+	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId})
+
+	go currencysrv.CreateTimeSeriesCurrenciesRate(startDate, endDate)
+
+	log.Debug("Successfully accepted create time series currencies rate request")
 	ctx.StatusCode(202)
 }
 

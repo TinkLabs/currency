@@ -101,3 +101,52 @@ func CreateCurrenciesRate() {
 	
 	return
 }
+
+func CreateTimeSeriesCurrencyRate(code, startDate, endDate string) {
+	log := logrus.WithFields(logrus.Fields{"module": "services/currency/fixer", "method": "CreateTimeSeriesCurrencyRate", "start_date": startDate, "end_date": endDate, "currency_code": code})
+
+	base := code
+	toCurrencies := []string{} // default all
+
+	baseRate, err := fixersrv.ListTimeSeriesRates(startDate, endDate, base, toCurrencies)
+	if err != nil {
+		log.WithField("err", err).Error("Failed to get time series currency rates")
+		return
+	}
+
+	for date, info := range baseRate.Rates {
+		rates := make(map[string]float64)
+
+		for code, rate := range info {
+			rates[string(code)] = float64(rate)
+		}
+
+		enRate, err := GetOrCreateRate(base, date, rates)
+		if err != nil {
+			log.WithField("err", err).Error("Failed to create currency rate")
+			continue
+		} else {
+			log.WithField("rate_id", enRate.Id).Debug("Successfully created currency rate")
+		}
+	}
+
+	return
+}
+
+func CreateTimeSeriesCurrenciesRate(startDate, endDate string) {
+	log := logrus.WithFields(logrus.Fields{"module": "services/currency/fixer", "method": "CreateCurrenciesRate"})
+
+	enCurrencies, err := FindAll()
+	if err != nil {
+		log.WithField("err", err).Error("Failed to get currencies")
+		return
+	}
+
+	for _, enCurrency := range enCurrencies {
+		log = log.WithFields(logrus.Fields{"currency_code": enCurrency.Code})
+		go CreateTimeSeriesCurrencyRate(enCurrency.Code, startDate, endDate)
+
+	}
+
+	return
+}
