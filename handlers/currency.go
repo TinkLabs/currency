@@ -118,10 +118,7 @@ func CreateTimeSeriesCurrencyRate(ctx iris.Context) {
 	startDate := ctx.URLParam("start_date")
 	endDate := ctx.URLParam("end_date")
 
-	endTime, endErr := time.Parse("2006-01-02", endDate)
-	startTime, startErr := time.Parse("2006-01-02", startDate)
-	validDates := endTime.After(startTime)
-	if startErr != nil || endErr != nil || !validDates {
+	if !isValidDates(startDate, endDate) {
 		ctx.StatusCode(iris.StatusBadRequest)
 		return
 	}
@@ -142,10 +139,7 @@ func CreateTimeSeriesCurrenciesRate(ctx iris.Context) {
 	startDate := ctx.URLParam("start_date")
 	endDate := ctx.URLParam("end_date")
 
-	endTime, endErr := time.Parse("2006-01-02", endDate)
-	startTime, startErr := time.Parse("2006-01-02", startDate)
-	validDates := endTime.After(startTime)
-	if startErr != nil || endErr != nil || !validDates {
+	if !isValidDates(startDate, endDate) {
 		ctx.StatusCode(iris.StatusBadRequest)
 		return
 	}
@@ -218,4 +212,22 @@ func ConvertCurrencies(ctx iris.Context) {
 
 	log.Debug("Successfully created currency rate")
 	ctx.JSON(enCurrencyConversion)
+}
+
+func isValidDates(startDate, endDate string) (bool) {
+	endTime, endErr := time.Parse("2006-01-02", endDate)
+	startTime, startErr := time.Parse("2006-01-02", startDate)
+	if startErr != nil || endErr != nil {
+		return false
+	}
+
+	isValidDates := endTime.After(startTime)
+	if !isValidDates {
+		return false
+	}
+
+	numHours := endTime.Sub(startTime).Hours()
+	numDays := numHours/24.0
+
+	return numDays <= 365
 }

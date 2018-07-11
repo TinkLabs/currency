@@ -23,8 +23,8 @@ func ListCurrencies() (*fixer.SymbolsResp, error) {
 	return resp, nil
 }
 
-func ListRates(base string, toCurrencies []string) (*fixer.LatestResp, error) {
-	log := logrus.WithFields(logrus.Fields{"module": "service", "method": "ListCurrencies"})
+func GetLatestRates(base string, toCurrencies []string) (*fixer.LatestResp, error) {
+	log := logrus.WithFields(logrus.Fields{"module": "service", "method": "GetLatestRates"})
 
 	resp, err := latest.Get(base, toCurrencies)
 	if err != nil {
@@ -37,10 +37,10 @@ func ListRates(base string, toCurrencies []string) (*fixer.LatestResp, error) {
 	return resp, nil
 }
 
-func ListTimeSeriesRates(start_date, end_date, base string, toCurrencies []string) (*fixer.TimeSeriesResp, error) {
-	log := logrus.WithFields(logrus.Fields{"module": "service", "method": "ListTimeSeriesRates"})
+func GetRatesByDates(startDate, endDate, base string, toCurrencies []string) (*fixer.TimeSeriesResp, error) {
+	log := logrus.WithFields(logrus.Fields{"module": "service", "method": "GetRatesByDates"})
 
-	resp, err := time_series.Get(start_date, end_date, base, toCurrencies)
+	resp, err := time_series.Get(startDate, endDate, base, toCurrencies)
 	if err != nil {
 		log.WithField("err", err).Error("Failed to list time series currency rates")
 		return nil, err

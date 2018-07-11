@@ -55,7 +55,7 @@ func GetOrCreateCurrencyRate(code string) (*encurrency.Rate, error) {
 
 	toCurrencies := []string{} // default all
 
-	baseRate, err := fixersrv.ListRates(base, toCurrencies)
+	baseRate, err := fixersrv.GetLatestRates(base, toCurrencies)
 	if err != nil {
 		log.WithField("err", err).Error("Failed to get currency rate")
 		return nil, err
@@ -108,16 +108,16 @@ func CreateTimeSeriesCurrencyRate(code, startDate, endDate string) {
 	base := code
 	toCurrencies := []string{} // default all
 
-	baseRate, err := fixersrv.ListTimeSeriesRates(startDate, endDate, base, toCurrencies)
+	baseRate, err := fixersrv.GetRatesByDates(startDate, endDate, base, toCurrencies)
 	if err != nil {
 		log.WithField("err", err).Error("Failed to get time series currency rates")
 		return
 	}
 
-	for date, info := range baseRate.Rates {
+	for date, rateByDate := range baseRate.Rates {
 		rates := make(map[string]float64)
 
-		for code, rate := range info {
+		for code, rate := range rateByDate {
 			rates[string(code)] = float64(rate)
 		}
 
