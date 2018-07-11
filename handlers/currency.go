@@ -1,13 +1,14 @@
 package handlers
 
 import (
+	"time"
+
 	encurrency "currency/entities/currency"
 	currencysrv "currency/services/currency"
 	"currency/services/pagination"
 
 	"github.com/kataras/iris"
 	"github.com/sirupsen/logrus"
-	"time"
 )
 
 func GetCurrency(ctx iris.Context) {
@@ -125,7 +126,7 @@ func CreateTimeSeriesCurrencyRate(ctx iris.Context) {
 		return
 	}
 
-	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "code": enCurrency.Code, "start_date": startDate, "end_date": endDate})
+	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "start_date": startDate, "end_date": endDate})
 
 	go currencysrv.CreateTimeSeriesCurrencyRate(enCurrency.Code, startDate, endDate)
 
@@ -149,7 +150,7 @@ func CreateTimeSeriesCurrenciesRate(ctx iris.Context) {
 		return
 	}
 
-	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId})
+	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "start_date": startDate, "end_date": endDate})
 
 	go currencysrv.CreateTimeSeriesCurrenciesRate(startDate, endDate)
 
