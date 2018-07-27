@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"time"
+
 	encurrency "currency/entities/currency"
 	currencysrv "currency/services/currency"
 	"currency/services/pagination"
@@ -33,20 +35,20 @@ func ListCurrencies(ctx iris.Context) {
 
 	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "limit": limit, "skip": skip, "order_by": orderBy})
 
-	enCurrencies, total, err := currencysrv.Search(nil, skip, limit, orderBy)
+	enCurrencies, err := currencysrv.FindAll()
 	if err != nil {
 		log.WithField("err", err).Error("Failed to list currencies")
 		ctx.StatusCode(iris.StatusInternalServerError)
 		return
 	}
 
-	count := len(enCurrencies)
+	total := len(enCurrencies)
 
-	log = log.WithFields(logrus.Fields{"count": count, "total": total})
+	log = log.WithFields(logrus.Fields{"count": total, "total": total})
 
 	result := pagination.New()
-	result.SetCount(count)
-	result.SetLimit(limit)
+	result.SetCount(total)
+	result.SetLimit(total)
 	result.SetSkip(skip)
 	result.SetTotal(total)
 	result.SetData(enCurrencies)
@@ -83,7 +85,7 @@ func CreateCurrencyRate(ctx iris.Context) {
 
 	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "id": id})
 
-	enCurrencyRate, err := currencysrv.CreateCurrencyRate(enCurrency.Code)
+	enCurrencyRate, err := currencysrv.GetOrCreateCurrencyRate(enCurrency.Code)
 	if err != nil {
 		log.WithField("err", err).Error("Failed to create currency rate")
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -105,6 +107,48 @@ func CreateCurrenciesRate(ctx iris.Context) {
 	go currencysrv.CreateCurrenciesRate()
 
 	log.Debug("Successfully accepted create currencies rate request")
+	ctx.StatusCode(202)
+}
+
+func CreateTimeSeriesCurrencyRate(ctx iris.Context) {
+	log := logrus.WithFields(logrus.Fields{"module": "handler", "method": "CreateTimeSeriesCurrenciesRate", "http_request": ctx.Request()})
+
+	xRequestId := ctx.Values().GetString("_x_request_id")
+	enCurrency := ctx.Values().Get("_encurrency").(*encurrency.Currency)
+	startDate := ctx.URLParam("start_date")
+	endDate := ctx.URLParam("end_date")
+
+	if !isValidDates(startDate, endDate) {
+		ctx.StatusCode(iris.StatusBadRequest)
+		return
+	}
+
+	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "start_date": startDate, "end_date": endDate})
+
+	go currencysrv.CreateTimeSeriesCurrencyRate(enCurrency.Code, startDate, endDate)
+
+	log.Debug("Successfully accepted create time series currencies rate request")
+	ctx.StatusCode(202)
+}
+
+func CreateTimeSeriesCurrenciesRate(ctx iris.Context) {
+	log := logrus.WithFields(logrus.Fields{"module": "handler", "method": "CreateTimeSeriesCurrenciesRate", "http_request": ctx.Request()})
+
+	xRequestId := ctx.Values().GetString("_x_request_id")
+
+	startDate := ctx.URLParam("start_date")
+	endDate := ctx.URLParam("end_date")
+
+	if !isValidDates(startDate, endDate) {
+		ctx.StatusCode(iris.StatusBadRequest)
+		return
+	}
+
+	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "start_date": startDate, "end_date": endDate})
+
+	go currencysrv.CreateTimeSeriesCurrenciesRate(startDate, endDate)
+
+	log.Debug("Successfully accepted create time series currencies rate request")
 	ctx.StatusCode(202)
 }
 
@@ -168,4 +212,22 @@ func ConvertCurrencies(ctx iris.Context) {
 
 	log.Debug("Successfully created currency rate")
 	ctx.JSON(enCurrencyConversion)
+}
+
+func isValidDates(startDate, endDate string) (bool) {
+	endTime, endErr := time.Parse("2006-01-02", endDate)
+	startTime, startErr := time.Parse("2006-01-02", startDate)
+	if startErr != nil || endErr != nil {
+		return false
+	}
+
+	isValidDates := endTime.After(startTime)
+	if !isValidDates {
+		return false
+	}
+
+	numHours := endTime.Sub(startTime).Hours()
+	numDays := numHours/24.0
+
+	return numDays <= 365
 }

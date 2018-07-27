@@ -20,9 +20,10 @@
     "fixer",
     "fixer/convert",
     "fixer/latest",
-    "fixer/symbols"
+    "fixer/symbols",
+    "fixer/time-series"
   ]
-  revision = "38907161fd09883ab422633f2122889572e4b1bb"
+  revision = "71b711fda03189857b8270a2496b036dc7fc691c"
 
 [[projects]]
   branch = "master"
@@ -382,6 +383,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7ae8e09b4b3ff5c8b63e0035733c9259054345df4f8bb086f226c436324b4433"
+  inputs-digest = "a04c5c9c04e964d6ce8aed79636f97347c67a4136601359e4d4500b27e6754ea"
   solver-name = "gps-cdcl"
   solver-version = 1

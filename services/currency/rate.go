@@ -21,6 +21,33 @@ func CreateRate(base, date string, rates map[string]float64) (*encurrency.Rate, 
 	return enRate, nil
 }
 
+func GetOrCreateRate(code, date string, rates map[string]float64) (*encurrency.Rate, error) {
+	log := logrus.WithFields(logrus.Fields{"module": "services/currency/fixer", "method": "GetOrCreateCurrencyRate", "currency_code": code})
+
+	base := code
+
+	enRates, _, err := FindRatesByBaseDate(base, date, 0, 1, "")
+	if err != nil && err != ErrNotFound {
+		log.WithField("err", err).Error("Failed to find currency rate by base and date")
+		return nil, err
+	}
+
+	if enRates != nil {
+		log.Debug("Successfully got currency rate by base and date")
+		enRate := enRates[0]
+		return &enRate, nil
+	}
+
+	enRate, err := CreateRate(base, date, rates)
+	if err != nil {
+		log.WithField("err", err).Error("Failed to create currency rate")
+		return nil, err
+	}
+
+	log.Debug("Successfully created currency rate")
+	return enRate, nil
+}
+
 func FindRateById(id string) (*encurrency.Rate, error) {
 	log := logrus.WithFields(logrus.Fields{"module": "services/currency/rate", "method": "FindRateById", "id": id})
 

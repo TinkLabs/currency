@@ -8,7 +8,7 @@ import (
 
 const DateQueryStringFormat = "2006-01-02"
 
-func PraseDates(ctx iris.Context) {
+func ParseDates(ctx iris.Context) {
 	dateStr := ctx.FormValue("date")
 	dateStartStr := ctx.FormValue("date_start")
 	dateEndStr := ctx.FormValue("date_end")
