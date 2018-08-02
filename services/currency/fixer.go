@@ -47,7 +47,7 @@ func GetOrCreateCurrencyRate(code string) (*encurrency.Rate, error) {
 		return nil, err
 	}
 
-	if enRates != nil {
+	if len(enRates) != 0 {
 		log.Debug("Successfully got currency rate by base and date")
 		enRate := enRates[0]
 		return &enRate, nil
