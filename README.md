@@ -2,6 +2,12 @@
 
 Currency provides API services for currency. 
 
+## Test 
+|dev|[![CircleCI](https://circleci.com/gh/TinkLabs/currency/tree/dev.svg?style=svg&circle-token=da10eb73745c709698c37fa718cb8f72ae14c9fa)](https://circleci.com/gh/TinkLabs/currency/tree/dev)|
+|---|---|
+|master|[![CircleCI](https://circleci.com/gh/TinkLabs/currency/tree/master.svg?style=svg&circle-token=da10eb73745c709698c37fa718cb8f72ae14c9fa)](https://circleci.com/gh/TinkLabs/currency/tree/master)| 
+
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development.
