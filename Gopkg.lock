@@ -18,6 +18,14 @@
   revision = "8828253bfc54f2f91aaef5f32b44a244b0a98e4f"
 
 [[projects]]
+  digest = "1:ebc7d4777bf39f071f933784a6fe14dd7de6668a140528195598c8fcffd05d84"
+  name = "github.com/Rhymond/go-money"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "012e82b838f1b0ebd7b32acc842ba8a9ca20df05"
+  version = "v0.3.6"
+
+[[projects]]
   branch = "master"
   digest = "1:f3d644e4f9c0f3c3a23c0556df749b111bea11cf9f083f975659d8206535d06f"
   name = "github.com/Shopify/goreferrer"
@@ -506,6 +514,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/Rhymond/go-money",
     "github.com/TinkLabs/go-webservices/fixer",
     "github.com/TinkLabs/go-webservices/fixer/convert",
     "github.com/TinkLabs/go-webservices/fixer/latest",
