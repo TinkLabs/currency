@@ -2,6 +2,7 @@ package currency
 
 import (
 	"errors"
+	"github.com/globalsign/mgo/bson"
 
 	encurrency "currency/entities/currency"
 
@@ -65,6 +66,27 @@ func FindByCode(code string) (*encurrency.Currency, error) {
 	enCurrency := enCurrencies[0]
 	log.WithFields(logrus.Fields{"id": enCurrency.Id}).Debug("Successfully find currency by code")
 	return &enCurrency, nil
+}
+
+func FindByCodes(codes []string) ([]encurrency.Currency, error) {
+	log := logrus.WithFields(logrus.Fields{"module": "services/currency", "method": "FindByCodes", "codes": codes})
+
+	query := map[string]interface{}{}
+	//query["code"] = codes
+	query = bson.M{"code": bson.M{"$in": codes}}
+
+	enCurrencies, _, err := Search(query, 0, 2, "")
+	if err != nil {
+		log.WithField("err", err).Error("Failed to search currency by code")
+		return nil, err
+	}
+
+	if len(enCurrencies) == 0 {
+		log.WithField("err", ErrNotFound).Warn("Failed to find currency by code")
+		return nil, ErrNotFound
+	}
+	log.WithFields(logrus.Fields{"currencies": enCurrencies}).Debug("Successfully find currency by code")
+	return enCurrencies, nil
 }
 
 func FindByIds(ids []string) ([]encurrency.Currency, error) {
