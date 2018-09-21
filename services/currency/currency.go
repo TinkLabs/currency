@@ -75,7 +75,7 @@ func FindByCodes(codes []string) ([]encurrency.Currency, error) {
 	//query["code"] = codes
 	query = bson.M{"code": bson.M{"$in": codes}}
 
-	enCurrencies, _, err := Search(query, 0, 2, "")
+	enCurrencies, _, err := Search(query, 0, 0, "")
 	if err != nil {
 		log.WithField("err", err).Error("Failed to search currency by code")
 		return nil, err

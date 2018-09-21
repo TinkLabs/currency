@@ -196,8 +196,8 @@ func ListCurrenciesRates(ctx iris.Context) {
 	skip := ctx.Values().GetIntDefault("_skip", 0)
 	orderBy := ctx.Values().GetStringDefault("_order_by", "")
 	enCurrencies := ctx.Values().Get("_encurrencies").([]encurrency.Currency)
-	enCurrenciesRates := make([]*encurrency.Rate, len(enCurrencies), 2)
-	for index, item := range enCurrencies {
+	enCurrenciesRates := make(map[string]*encurrency.Rate)
+	for _, item := range enCurrencies {
 		enRate, err := currencysrv.FindLatestRatesByBase(item.Code)
 		if err != nil {
 			log.WithField("err", err).Error("Failed to list currencies")
@@ -206,7 +206,7 @@ func ListCurrenciesRates(ctx iris.Context) {
 		}
 		log = log.WithFields(logrus.Fields{"rate": enRate})
 
-		enCurrenciesRates[index] = enRate
+		enCurrenciesRates[item.Code] = enRate
 	}
 
 	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "enCurrencies": enCurrencies, "limit": limit, "skip": skip, "order_by": orderBy})
