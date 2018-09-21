@@ -192,7 +192,7 @@ func ListCurrenciesRates(ctx iris.Context) {
 
 	xRequestId := ctx.Values().GetString("_x_request_id")
 
-	limit := ctx.Values().GetIntDefault("_limit", 1)
+	limit := ctx.Values().GetIntDefault("_limit", 0)
 	skip := ctx.Values().GetIntDefault("_skip", 0)
 	orderBy := ctx.Values().GetStringDefault("_order_by", "")
 	enCurrencies := ctx.Values().Get("_encurrencies").([]encurrency.Currency)
@@ -212,11 +212,12 @@ func ListCurrenciesRates(ctx iris.Context) {
 	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "enCurrencies": enCurrencies, "limit": limit, "skip": skip, "order_by": orderBy})
 
 	count := len(enCurrenciesRates)
+	total := len(enCurrenciesRates)
 
 	result := pagination.New()
 	result.SetCount(count)
-	result.SetLimit(count)
-	result.SetTotal(count)
+	result.SetLimit(limit)
+	result.SetTotal(total)
 	result.SetSkip(skip)
 	result.SetData(enCurrenciesRates)
 
