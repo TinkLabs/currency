@@ -97,8 +97,6 @@ func FindLatestRatesByBases(codes []string) ([]*encurrency.Rate, error) {
 		enCurrenciesRates[index] = enRate
 	}
 	log.WithFields(logrus.Fields{"currencies_rates": enCurrenciesRates}).Debug("Successfully find rates by currencies")
-
-
 	return enCurrenciesRates, nil
 }
 
