@@ -1,10 +1,9 @@
 package currency
 
 import (
+	encurrency "currency/entities/currency"
 	"errors"
 	"github.com/globalsign/mgo/bson"
-
-	encurrency "currency/entities/currency"
 
 	"github.com/sirupsen/logrus"
 
@@ -68,25 +67,39 @@ func FindByCode(code string) (*encurrency.Currency, error) {
 	return &enCurrency, nil
 }
 
-func FindByCodes(codes []string) ([]encurrency.Currency, error) {
-	log := logrus.WithFields(logrus.Fields{"module": "services/currency", "method": "FindByCodes", "codes": codes})
+func FindLatestRatesByBases(codes []string) ([]*encurrency.Rate, error) {
+	log := logrus.WithFields(logrus.Fields{"module": "services/currency", "method": "FindLatestRatesByBases", "codes": codes})
 
 	query := map[string]interface{}{}
-	//query["code"] = codes
-	query = bson.M{"code": bson.M{"$in": codes}}
+	query["code"] = bson.M{"$in": codes}
 
 	enCurrencies, _, err := Search(query, 0, 0, "")
 	if err != nil {
-		log.WithField("err", err).Error("Failed to search currency by code")
+		log.WithField("err", err).Error("Failed to search currencies by codes")
 		return nil, err
 	}
 
 	if len(enCurrencies) == 0 {
-		log.WithField("err", ErrNotFound).Warn("Failed to find currency by code")
+		log.WithField("err", ErrNotFound).Warn("Failed to find currencies by codes")
 		return nil, ErrNotFound
 	}
-	log.WithFields(logrus.Fields{"currencies": enCurrencies}).Debug("Successfully find currency by code")
-	return enCurrencies, nil
+	log.WithFields(logrus.Fields{"currencies": enCurrencies}).Debug("Successfully find currencies by codes")
+
+	enCurrenciesRates := make([]*encurrency.Rate, len(enCurrencies))
+	for index, item := range enCurrencies {
+		enRate, err := FindLatestRatesByBase(item.Code)
+		if err != nil {
+			log.WithField("err", err).Error("Failed to list currencies")
+			return nil, err
+		}
+		log = log.WithFields(logrus.Fields{"rate": enRate})
+
+		enCurrenciesRates[index] = enRate
+	}
+	log.WithFields(logrus.Fields{"currencies_rates": enCurrenciesRates}).Debug("Successfully find rates by currencies")
+
+
+	return enCurrenciesRates, nil
 }
 
 func FindByIds(ids []string) ([]encurrency.Currency, error) {

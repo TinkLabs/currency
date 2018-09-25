@@ -194,22 +194,15 @@ func ListCurrenciesRates(ctx iris.Context) {
 
 	limit := ctx.Values().GetIntDefault("_limit", 0)
 	skip := ctx.Values().GetIntDefault("_skip", 0)
-	orderBy := ctx.Values().GetStringDefault("_order_by", "")
-	enCurrencies := ctx.Values().Get("_encurrencies").([]encurrency.Currency)
-	enCurrenciesRates := make([]*encurrency.Rate, len(enCurrencies))
-	for index, item := range enCurrencies {
-		enRate, err := currencysrv.FindLatestRatesByBase(item.Code)
-		if err != nil {
-			log.WithField("err", err).Error("Failed to list currencies")
-			ctx.StatusCode(iris.StatusInternalServerError)
-			return
-		}
-		log = log.WithFields(logrus.Fields{"rate": enRate})
-
-		enCurrenciesRates[index] = enRate
+	codes := ctx.Values().Get("_codes").([]string)
+	enCurrenciesRates, err := currencysrv.FindLatestRatesByBases(codes)
+	if err != nil {
+		log.WithField("err", err).Error("Failed to list currencies")
+		ctx.StatusCode(iris.StatusInternalServerError)
+		return
 	}
 
-	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "enCurrencies": enCurrencies, "limit": limit, "skip": skip, "order_by": orderBy})
+	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "currenciesRates": enCurrenciesRates})
 
 	count := len(enCurrenciesRates)
 	total := len(enCurrenciesRates)

@@ -39,21 +39,9 @@ func FetchCurrencies(ctx iris.Context) {
 	codes := strings.Split(codeStr, ",");
 
 	xRequestId := ctx.Values().GetString("_x_request_id")
+	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "codes": codes})
 
-	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "code": codes})
-
-	enCurrencies, err := currencysrv.FindByCodes(codes)
-	if err == currencysrv.ErrNotFound {
-		log.Warn("Failed to get currency by codes")
-		ctx.StatusCode(iris.StatusNotFound)
-		return
-	} else if err != nil {
-		log.WithField("err", err).Error("Failed to get currency by codes")
-		ctx.StatusCode(iris.StatusInternalServerError)
-		return
-	}
-
-	ctx.Values().Set("_encurrencies", enCurrencies)
+	ctx.Values().Set("_codes", codes)
 
 	ctx.Next()
 }
