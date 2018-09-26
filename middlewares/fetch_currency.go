@@ -1,8 +1,6 @@
 package middlewares
 
 import (
-	"strings"
-
 	currencysrv "currency/services/currency"
 	"github.com/kataras/iris"
 	"github.com/sirupsen/logrus"
@@ -28,20 +26,6 @@ func FetchCurrency(ctx iris.Context) {
 	}
 
 	ctx.Values().Set("_encurrency", enCurrency)
-
-	ctx.Next()
-}
-
-func FetchCurrencies(ctx iris.Context) {
-	log := logrus.WithFields(logrus.Fields{"module": "middleware", "method": "FetchCurrencies"})
-
-	codeStr := ctx.URLParam("code");
-	codes := strings.Split(codeStr, ",");
-
-	xRequestId := ctx.Values().GetString("_x_request_id")
-	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "codes": codes})
-
-	ctx.Values().Set("_codes", codes)
 
 	ctx.Next()
 }

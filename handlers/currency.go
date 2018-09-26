@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"strings"
 	"time"
 
 	encurrency "currency/entities/currency"
@@ -194,7 +195,9 @@ func ListCurrenciesRates(ctx iris.Context) {
 
 	limit := ctx.Values().GetIntDefault("_limit", 0)
 	skip := ctx.Values().GetIntDefault("_skip", 0)
-	codes := ctx.Values().Get("_codes").([]string)
+
+	codeStr := ctx.URLParam("code")
+	codes := strings.Split(codeStr, ",")
 	enCurrenciesRates, err := currencysrv.FindLatestRatesByBases(codes)
 	if err != nil {
 		log.WithField("err", err).Error("Failed to list currencies")
