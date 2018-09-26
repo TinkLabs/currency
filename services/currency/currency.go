@@ -1,9 +1,9 @@
 package currency
 
 import (
-	encurrency "currency/entities/currency"
 	"errors"
-	"github.com/globalsign/mgo/bson"
+
+	encurrency "currency/entities/currency"
 
 	"github.com/sirupsen/logrus"
 
@@ -70,33 +70,14 @@ func FindByCode(code string) (*encurrency.Currency, error) {
 func FindLatestRatesByBases(codes []string) ([]*encurrency.Rate, error) {
 	log := logrus.WithFields(logrus.Fields{"module": "services/currency", "method": "FindLatestRatesByBases", "codes": codes})
 
-	query := map[string]interface{}{}
-	query["code"] = bson.M{"$in": codes}
-
-	enCurrencies, _, err := Search(query, 0, 0, "")
-	if err != nil {
-		log.WithField("err", err).Error("Failed to search currencies by codes")
-		return nil, err
-	}
-
-	if len(enCurrencies) == 0 {
-		log.WithField("err", ErrNotFound).Warn("Failed to find currencies by codes")
-		return nil, ErrNotFound
-	}
-	log.WithFields(logrus.Fields{"currencies": enCurrencies}).Debug("Successfully find currencies by codes")
-
-	enCurrenciesRates := make([]*encurrency.Rate, len(enCurrencies))
-	for index, item := range enCurrencies {
-		enRate, err := FindLatestRatesByBase(item.Code)
-		if err != nil {
-			log.WithField("err", err).Error("Failed to list currencies")
-			return nil, err
+	enCurrenciesRates := make([]*encurrency.Rate, 0)
+	for _, code := range codes {
+		enRate, err := FindLatestRatesByBase(code)
+		if err == nil {
+			log.WithFields(logrus.Fields{"code": code, "rate": enRate}).Debug("Successfully find rate by code")
+			enCurrenciesRates = append(enCurrenciesRates, enRate)
 		}
-		log = log.WithFields(logrus.Fields{"rate": enRate})
-
-		enCurrenciesRates[index] = enRate
 	}
-	log.WithFields(logrus.Fields{"currencies_rates": enCurrenciesRates}).Debug("Successfully find rates by currencies")
 	return enCurrenciesRates, nil
 }
 
