@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"strings"
 	"time"
 
 	encurrency "currency/entities/currency"
@@ -187,6 +188,40 @@ func ListCurrencyRates(ctx iris.Context) {
 	ctx.JSON(result.BuildScrollable())
 }
 
+func ListCurrenciesRates(ctx iris.Context) {
+	log := logrus.WithFields(logrus.Fields{"module": "handler", "method": "ListCurrenciesRates", "http_request": ctx.Request()})
+
+	xRequestId := ctx.Values().GetString("_x_request_id")
+
+	limit := ctx.Values().GetIntDefault("_limit", 0)
+	skip := ctx.Values().GetIntDefault("_skip", 0)
+
+	codeStr := ctx.URLParam("code")
+	codes := strings.Split(codeStr, ",")
+	enCurrenciesRates, err := currencysrv.FindLatestRatesByBases(codes)
+	if err != nil {
+		log.WithField("err", err).Error("Failed to list currencies")
+		ctx.StatusCode(iris.StatusInternalServerError)
+		return
+	}
+
+	log = log.WithFields(logrus.Fields{"x_request_id": xRequestId, "currenciesRates": enCurrenciesRates})
+
+	count := len(enCurrenciesRates)
+	total := len(enCurrenciesRates)
+
+	result := pagination.New()
+	result.SetCount(count)
+	result.SetLimit(limit)
+	result.SetTotal(total)
+	result.SetSkip(skip)
+	result.SetData(enCurrenciesRates)
+
+	log.Debug("Successfully listed currency rates")
+
+	ctx.JSON(result.BuildScrollable())
+}
+
 func ConvertCurrencies(ctx iris.Context) {
 	log := logrus.WithFields(logrus.Fields{"module": "handler", "method": "ConvertCurrencies", "http_request": ctx.Request()})
 
@@ -227,7 +262,7 @@ func isValidDates(startDate, endDate string) (bool) {
 	}
 
 	numHours := endTime.Sub(startTime).Hours()
-	numDays := numHours/24.0
+	numDays := numHours / 24.0
 
 	return numDays <= 365
 }

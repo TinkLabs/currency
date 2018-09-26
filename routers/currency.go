@@ -13,6 +13,7 @@ func currency(app *iris.Application) {
 	app.Get("/currencies/:code", mid.FetchCurrency, hd.GetCurrency)
 	app.Post("/currencies/:code/rates/latest", mid.FetchCurrency, hd.CreateCurrencyRate)
 	app.Get("/currencies/:code/rates", mid.FetchCurrency, hd.ListCurrencyRates)
+	app.Get("/currencies_rates", hd.ListCurrenciesRates)
 	app.Post("/currencies/rates/latest", hd.CreateCurrenciesRate)
 	app.Get("/currency/convert", hd.ConvertCurrencies)
 	app.Post("/currencies/:code/rates", mid.FetchCurrency, hd.CreateTimeSeriesCurrencyRate)
