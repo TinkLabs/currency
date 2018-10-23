@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	currencysrv "currency/services/currency"
-
 	"github.com/kataras/iris"
 	"github.com/sirupsen/logrus"
 )

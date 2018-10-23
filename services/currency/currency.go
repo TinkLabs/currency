@@ -67,6 +67,20 @@ func FindByCode(code string) (*encurrency.Currency, error) {
 	return &enCurrency, nil
 }
 
+func FindLatestRatesByBases(codes []string) ([]*encurrency.Rate, error) {
+	log := logrus.WithFields(logrus.Fields{"module": "services/currency", "method": "FindLatestRatesByBases", "codes": codes})
+
+	enCurrenciesRates := make([]*encurrency.Rate, 0)
+	for _, code := range codes {
+		enRate, err := FindLatestRatesByBase(code)
+		if err == nil {
+			log.WithFields(logrus.Fields{"code": code, "rate": enRate}).Debug("Successfully find rate by code")
+			enCurrenciesRates = append(enCurrenciesRates, enRate)
+		}
+	}
+	return enCurrenciesRates, nil
+}
+
 func FindByIds(ids []string) ([]encurrency.Currency, error) {
 	log := logrus.WithFields(logrus.Fields{"module": "services/currency", "method": "FindByIds", "ids": ids})
 
