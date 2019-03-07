@@ -5,5 +5,5 @@ import (
 )
 
 func Welcome(ctx iris.Context) {
-	ctx.Text("Welcome to currency!")
+	ctx.Text("Welcome to currency!!")
 }
