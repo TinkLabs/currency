@@ -3,13 +3,12 @@ app:
   port: 8080
 mongodb:
   urls:
-    - ds139853-a0.mlab.com:39853
-    - ds139853-a1.mlab.com:39853
-  port: 39853
+    - ip-10-0-0-19.ap-southeast-1.compute.internal:27017
+  port: 27017
   database: currency
-  replica_set: rs-ds139853
+  replica_set:
   username: admin
-  password: ETsHC6tQScRp
+  password: mNha6J965NsRf4ux
 webservices:
   fixer:
     url: http://data.fixer.io/api
