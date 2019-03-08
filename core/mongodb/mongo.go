@@ -43,7 +43,7 @@ func init() {
 		//ReplicaSetName: replicaSet,
 
 		// required for MongoDB Atlas
-		//Source:         "admin",
+		Source: user,
 	}
 
 	// below dialInfo will also works, keep here for a reference for future reference
