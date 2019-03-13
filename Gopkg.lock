@@ -172,6 +172,14 @@
   revision = "36e9d2ebbde5e3f13ab2e25625fd453271d6522e"
 
 [[projects]]
+  digest = "1:a22dcb0e9aaee82acd1a3c82c00849cf075ab92cacc920807e6f7f4a34118652"
+  name = "github.com/iris-contrib/middleware"
+  packages = ["cors"]
+  pruneopts = "UT"
+  revision = "1060fbb0ce08a72c50c612e8e5bdc8076c28343d"
+  version = "v10"
+
+[[projects]]
   branch = "master"
   digest = "1:3e551bbb3a7c0ab2a2bf4660e7fcad16db089fdcfbb44b0199e62838038623ea"
   name = "github.com/json-iterator/go"
@@ -343,6 +351,14 @@
   pruneopts = "UT"
   revision = "c01d1270ff3e442a8a57cddc1c92dc1138598194"
   version = "v1.2.0"
+
+[[projects]]
+  digest = "1:b0c25f00bad20d783d259af2af8666969e2fc343fa0dc9efe52936bbd67fb758"
+  name = "github.com/rs/cors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "9a47f48565a795472d43519dd49aac781f3034fb"
+  version = "v1.6.0"
 
 [[projects]]
   branch = "master"
@@ -522,7 +538,9 @@
     "github.com/TinkLabs/go-webservices/fixer/time-series",
     "github.com/globalsign/mgo",
     "github.com/globalsign/mgo/bson",
+    "github.com/iris-contrib/middleware/cors",
     "github.com/kataras/iris",
+    "github.com/kataras/iris/cache",
     "github.com/satori/go.uuid",
     "github.com/shopspring/decimal",
     "github.com/sirupsen/logrus",
