@@ -38,18 +38,20 @@ func init() {
 }
 
 func setupLogger() {
-	// log to file with json format and higher logging level
-	file, err := os.OpenFile("./logs/currency.log", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0660)
-	if err != nil {
-		fmt.Printf("Failed to open log file, err=%+v\n", err)
-		os.Exit(1)
-	}
+	//// log to file with json format and higher logging level
+	//file, err := os.OpenFile("./logs/currency.log", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0660)
+	//if err != nil {
+	//	fmt.Printf("Failed to open log file, err=%+v\n", err)
+	//	os.Exit(1)
+	//}
 
 	// log as JSON format
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 
 	// log to file
-	logrus.SetOutput(file)
+	//logrus.SetOutput(file)
+
+	logrus.SetOutput(os.Stdout)
 
 	// only log the info severity or above.
 	logrus.SetLevel(logrus.InfoLevel)
